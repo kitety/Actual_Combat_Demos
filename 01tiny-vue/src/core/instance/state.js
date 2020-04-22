@@ -1,4 +1,4 @@
-import {noop} from '../util/index'
+import { noop } from "../util/index";
 
 const sharePropertyDefinition = {
   enumerable: true,
@@ -6,7 +6,6 @@ const sharePropertyDefinition = {
   set: noop,
   get: noop,
 };
-
 
 export function proxy(target, sourceKey, key) {
   sharePropertyDefinition.get = function proxyGetter() {
@@ -20,6 +19,9 @@ export function proxy(target, sourceKey, key) {
 export function initState(vm) {
   vm.watchers = [];
   const opts = vm.$options;
+  if (opts.methods) {
+    initMethods(vm, opts.methods);
+  }
   if (opts.data) {
     initData(vm);
   } else {
@@ -34,5 +36,11 @@ function initData(vm) {
   while (i--) {
     const key = keys[i];
     proxy(vm, "_data", key);
+  }
+}
+
+function initMethods(vm, methods) {
+  for (const key in methods) {
+    vm[key] = typeof methods[key] !== "function" ? noop : methods[key].bind(vm);
   }
 }
