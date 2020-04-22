@@ -1,0 +1,22 @@
+{
+  "name": "01tiny-vue",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel index.html --open",
+    "build": "parcel build index.html"
+  },
+  "dependencies": {
+    "s": "^1.0.0",
+    "sa": "^0.2.50",
+    "snabbdom": "0.7.3"
+  },
+  "devDependencies": {
+    "@babel/core": "7.2.0",
+    "parcel-bundler": "^1.6.1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
