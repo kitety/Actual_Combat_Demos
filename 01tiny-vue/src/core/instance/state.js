@@ -1,4 +1,5 @@
 import { noop } from "../util/index";
+import { observe } from "../observe";
 
 const sharePropertyDefinition = {
   enumerable: true,
@@ -28,7 +29,10 @@ export function initState(vm) {
     observe((vm._data = {}), true /* asRootData */);
   }
 }
-
+/**
+ * 把data代理到——data
+ * @param {} vm
+ */
 function initData(vm) {
   let data = (vm._data = vm.$options.data);
   let keys = Object.keys(data);
@@ -37,6 +41,7 @@ function initData(vm) {
     const key = keys[i];
     proxy(vm, "_data", key);
   }
+  observe(data, true /* asRootData */);
 }
 
 function initMethods(vm, methods) {

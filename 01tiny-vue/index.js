@@ -1,15 +1,19 @@
-import  Vue from './src/platforms/web/entry-runtime-with-compiler'
+import Vue from "./src/platforms/web/entry-runtime";
 var vm = new Vue({
-  el: '#app',
+  el: "#app",
   data: {
-    title: 'prev',
+    title: "prev",
+    num: 1,
+    deep: {
+      num: 1,
+    },
   },
   render(h) {
-    return h('button', {on: {click: this.someFn}}, this.title);
+    return h("button", { on: { click: this.someFn } }, this.num);
   },
   methods: {
     someFn() {
-      console.log(this);
-    }
-  }
-})
+      this.num++;
+    },
+  },
+});
