@@ -1,6 +1,7 @@
 import { initState } from "./state";
 
 export function initMixin(Vue) {
+  // 初始化 初始化数据
   Vue.prototype._init = function (options) {
     const vm = this;
     vm.isVue = true;

@@ -5,6 +5,7 @@ import { patch } from "../../platforms/web/runtime/patch";
 
 export function mountComponent(vm, el) {
   let updateComponent = () => {
+    // 渲染
     const vnode = vm.$options.render.call(vm, h);
     if (vm._vnode) {
       patch(vm._vnode, vnode);

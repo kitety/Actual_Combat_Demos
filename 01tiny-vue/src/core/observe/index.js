@@ -15,7 +15,9 @@ export function observe(data) {
         get() {
           console.log("get");
           if (Dep.target) {
-            dep.addSub(Dep.target);
+            // 其实add的是vm实例
+            // 再调用vm的update
+            dep.depend()
           }
           return val;
         },
