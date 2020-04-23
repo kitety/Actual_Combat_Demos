@@ -1,4 +1,4 @@
-import { ASSET_TYPES } from "../../shared/consts";
+import { ASSET_TYPES } from "../../shared/constants";
 import { isPlainObject } from "../util/lang";
 
 export function initAssetsRegisters(Vue) {

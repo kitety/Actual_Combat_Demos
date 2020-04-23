@@ -1,6 +1,13 @@
-import { h } from "snabbdom";
-let cacheaComp = {};
+import { ASSET_TYPES } from '../../shared/constants'
+import { initAssetsRegisters } from './assets'
+import { initExtend } from './extend'
 
-export function initRender(vm){
-  vm.
+export function initGlobalAPI (Vue) {
+  Vue.options = Object.create(null)
+  ASSET_TYPES.forEach(type => {
+    Vue.options[type + 's'] = Object.create(null)
+  })
+  Vue.options._base = Vue
+  initExtend(Vue)
+  initAssetsRegisters(Vue)
 }

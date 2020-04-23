@@ -11,16 +11,16 @@ const sharePropertyDefinition = {
   get: noop,
 };
 
-export function proxy(target, sourceKey, key) {
-  sharePropertyDefinition.get = function proxyGetter() {
+export function proxy (target, sourceKey, key) {
+  sharePropertyDefinition.get = function proxyGetter () {
     return this[sourceKey][key];
   };
-  sharePropertyDefinition.set = function proxyGetter(val) {
+  sharePropertyDefinition.set = function proxyGetter (val) {
     return (this[sourceKey][key] = val);
   };
   Object.defineProperty(target, key, sharePropertyDefinition);
 }
-export function initState(vm) {
+export function initState (vm) {
   vm.watchers = [];
   const opts = vm.$options;
   // data
@@ -43,8 +43,9 @@ export function initState(vm) {
  * 把data代理到——data
  * @param {} vm
  */
-function initData(vm) {
-  let data = (vm._data = vm.$options.data);
+function initData (vm) {
+  let data = vm.$options.data
+  data = vm._data = typeof data === "function" ? data.call(vm, vm) : data || {}
   let keys = Object.keys(data);
   let i = keys.length;
   while (i--) {
@@ -54,28 +55,28 @@ function initData(vm) {
   observe(data, true /* asRootData */);
 }
 
-function initMethods(vm, methods) {
+function initMethods (vm, methods) {
   for (const key in methods) {
     vm[key] = typeof methods[key] !== "function" ? noop : methods[key].bind(vm);
   }
 }
 
-function initComputed(vm, computed) {
+function initComputed (vm, computed) {
   // 保存计算watcher
   vm._computedWatcher = Object.create(null);
   for (const key in computed) {
     const userDef = computed[key];
     const getter = typeof userDef === "function" ? userDef : userDef.get;
-    vm._computedWatcher[key] = new Watcher(vm, getter,noop, computedWatcherOptions);
+    vm._computedWatcher[key] = new Watcher(vm, getter, noop, computedWatcherOptions);
     defineComputed(vm, key, userDef);
   }
 }
 
-function defineComputed(target, key, userDef) {
+function defineComputed (target, key, userDef) {
   Object.defineProperty(target, key, {
     enumerable: true,
     configurable: true,
-    get() {
+    get () {
       // 兼容{}中get 的方式
       const watcher = this._computedWatcher && this._computedWatcher[key];
       if (watcher) {
@@ -92,7 +93,7 @@ function defineComputed(target, key, userDef) {
   });
 }
 
-function initWatch(vm, watch) {
+function initWatch (vm, watch) {
   for (const key in watch) {
     const handler = watch[key];
     if (Array.isArray(handler)) {
@@ -105,7 +106,7 @@ function initWatch(vm, watch) {
     }
   }
 }
-function createWatcher(vm, expOrFn, handler, options) {
+function createWatcher (vm, expOrFn, handler, options) {
   if (isPlainObject(handler)) {
     options = handler;
     handler = handler.handler;
@@ -116,7 +117,7 @@ function createWatcher(vm, expOrFn, handler, options) {
   return vm.$watch(expOrFn, handler, options);
 }
 
-export function stateMixin(Vue) {
+export function stateMixin (Vue) {
   Vue.prototype.$watch = function (expOrFn, cb, options) {
     const vm = this;
     if (isPlainObject(cb)) {
