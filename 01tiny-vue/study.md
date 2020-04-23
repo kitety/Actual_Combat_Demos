@@ -1,0 +1,4 @@
+- Observer是用来给数据添加Dep依赖。
+- Dep是data每个对象包括子对象都拥有一个该对象, 当所绑定的数据有变更时, 通过dep.notify()通知Watcher。
+- Compile是HTML指令解析器，对每个元素节点的指令进行扫描和解析，根据指令模板替换数据，以及绑定相应的更新函数。
+- Watcher是连接Observer和Compile的桥梁，Compile解析指令时会创建一个对应的Watcher并绑定update方法 , 添加到Dep对象上。
