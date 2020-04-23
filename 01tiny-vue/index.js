@@ -2,6 +2,7 @@ import Vue from "./src/platforms/web/entry-runtime";
 var vm = new Vue({
   el: "#app",
   data: {
+    watchMsg: "init message",
     title: "prev",
     num: 1,
     deep: {
@@ -9,16 +10,21 @@ var vm = new Vue({
     },
   },
   computed: {
-    computedNum () {
-      return this.num * 10
-    }
+    computedNum() {
+      return this.num * 10;
+    },
   },
-  render (h) {
-    return h("button", { on: { click: this.someFn } }, this.computedNum);
+  watch: {
+    num(newVal, oldVal) {
+      this.watchMsg = newVal + " apples";
+    },
+  },
+  render(h) {
+    return h("button", { on: { click: this.someFn } }, this.watchMsg);
   },
 
   methods: {
-    someFn () {
+    someFn() {
       this.num++;
     },
   },
