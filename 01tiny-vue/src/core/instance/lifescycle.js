@@ -15,7 +15,7 @@ export function mountComponent (vm, el) {
     // }
     // vm._vnode = vnode;
     const vnode = vm._render()
-    vm.update(vnode)
+    vm._update(vnode)
   };
   new Watcher(vm, updateComponent, noop);
 }

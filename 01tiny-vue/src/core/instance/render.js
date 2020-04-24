@@ -3,7 +3,7 @@ let cacheComp = {}
 
 export function initRender (vm) {
   vm._c = (tag, options) => {
-    var Ctor = vm.prototype.options['component'][tag]
+    var Ctor = vm.constructor.options['components'][tag]
     var sub
     // 缓存组件，避免已经初始化的组件被重新初始化
     if (cacheComp[tag]) {
