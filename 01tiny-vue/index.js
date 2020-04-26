@@ -1,4 +1,4 @@
-import Vue from "./src/platforms/web/entry-runtime";
+import Vue, { compiler } from "./src/platforms/web/entry-runtime-with-compiler";
 Vue.component("button-counter", {
   data: function () {
     return {
@@ -6,7 +6,8 @@ Vue.component("button-counter", {
     };
   },
   render(h) {
-    return h("button", { on: { click: this.btnclcik } }, this.btnnum);
+    // return h("button", { on: { click: this.btnclcik } }, this.btnnum);
+    return <button onClick={this.btnclcik}>{this.btnnum}</button>;
   },
   methods: {
     btnclcik() {
@@ -37,7 +38,13 @@ var vm = new Vue({
   },
   render(h) {
     // return h("button", { on: { click: this.someFn } }, this.watchMsg);
-    return h("div", {}, [this._c("button-counter"), h("span", {}, this.msg)]);
+    // return h("div", {}, [this._c("button-counter"), h("span", {}, this.msg)]);
+    return (
+      <div>
+        {this._c("button-counter")}
+        <span>{this.msg}</span>
+      </div>
+    );
   },
 
   methods: {
