@@ -2,6 +2,7 @@
   <div id="app">
     <input type="file" @change="handleFileChange" />
     <el-button @click="handleUpload">上传</el-button>
+    <el-button @click="merge">合并</el-button>
   </div>
 </template>
 
@@ -50,6 +51,9 @@ export default {
       }
       return fileChunkList;
     },
+    async merge() {
+      await this.mergeRequest();
+    },
     // 上传切片
     async uploadChunks() {
       const requestList = this.data
@@ -69,7 +73,6 @@ export default {
       // 并发切片
       await Promise.all(requestList);
       // 合并切片
-      await this.mergeRequest();
     },
     async handleUpload() {
       if (!this.container.file) return;
@@ -88,6 +91,7 @@ export default {
           "content-type": "application/json",
         },
         data: JSON.stringify({
+          size: SIZE,
           filename: this.container.file.name,
         }),
       });

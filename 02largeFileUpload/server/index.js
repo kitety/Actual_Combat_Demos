@@ -20,16 +20,16 @@ const resolvePost = (req) =>
 const pipeStream = (path, writeStream) =>
   new Promise((resolve) => {
     const readSteam = fse.createReadStream(path);
+    readSteam.pipe(writeStream);
     readSteam.on("end", () => {
       fse.unlinkSync(path);
       resolve();
     });
-    readSteam.pipe(writeStream);
   });
 
 // 合并切片
-const mergeChunk = async (filePath, filename, size) => {
-  const chunkDir = path.resolve(UPLOAD_DIR, filename);
+const mergeFileChunk = async (filePath, filename, size) => {
+  const chunkDir = path.resolve(UPLOAD_DIR, filename + "dir");
   const chunkPaths = await fse.readdirSync(chunkDir);
   // 根据下标进行排序
   // 直接读取目录的顺序会错乱
@@ -56,25 +56,38 @@ server.on("request", async (req, res) => {
     res.end();
     return;
   }
-  const multipart = new multiparty.Form();
-  multipart.parse(req, async (err, fields, files) => {
-    console.log("files: ", files);
-    console.log("fields: ", fields);
-    if (err) {
-      return;
-    }
-    const [chunk] = files.chunk;
-    const [hash] = fields.hash;
-    const [filename] = fields.filename;
-    const chunkDir = path.resolve(UPLOAD_DIR, filename);
-    if (!fse.existsSync(chunkDir)) {
-      await fse.mkdirs(chunkDir);
-    }
-    // fse-extra专用方法，类似于fa.rename 跨平台
-    // fs-extra的rename方法在win有权限问题
-    await fse.move(chunk.path, `${chunkDir}/${hash}`);
-    res.end("received file chunk");
-  });
+  if (req.url === "/merge") {
+    const data = await resolvePost(req);
+    const { filename, size } = data;
+    const filePath = path.resolve(UPLOAD_DIR, `${filename}`);
+    await mergeFileChunk(filePath, filename, size);
+    res.end(
+      JSON.stringify({
+        code: 0,
+        message: "file merged success",
+      })
+    );
+  } else {
+    const multipart = new multiparty.Form();
+    multipart.parse(req, async (err, fields, files) => {
+      console.log("files: ", files);
+      console.log("fields: ", fields);
+      if (err) {
+        return;
+      }
+      const [chunk] = files.chunk;
+      const [hash] = fields.hash;
+      const [filename] = fields.filename;
+      const chunkDir = path.resolve(UPLOAD_DIR, filename + "dir");
+      if (!fse.existsSync(chunkDir)) {
+        await fse.mkdirs(chunkDir);
+      }
+      // fse-extra专用方法，类似于fa.rename 跨平台
+      // fs-extra的rename方法在win有权限问题
+      await fse.move(chunk.path, `${chunkDir}/${hash}`);
+      res.end("received file chunk");
+    });
+  }
 });
 server.listen(3000, () => {
   console.log("正在监听 3000 端口");
