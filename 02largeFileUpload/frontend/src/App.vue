@@ -4,8 +4,9 @@
     <el-button @click="handleUpload">上传</el-button>
     <el-button @click="merge">合并</el-button>
     <div>
+      <div>hash进度</div>
+      <el-progress :percentage="hashPercentage"></el-progress>
       <div>总进度</div>
-      {{ uploadPercentage }}
       <el-progress :percentage="uploadPercentage"></el-progress>
     </div>
     <el-table :data="data">
@@ -36,30 +37,38 @@ export default {
   data: () => ({
     container: {
       file: null,
+      hashPercentage: 0,
     },
     data: [],
+    hashPercentage: 0,
   }),
   computed: {
     uploadPercentage() {
       if (!this.container.file || !this.data.length) return 0;
-      console.log("this.data: ", this.data);
       const loaded = this.data
         .map((item) => item.chunk.size * item.percentage)
         .reduce((acc, cur) => Number(acc) + Number(cur), 0);
-      console.log("loaded: ", loaded);
       return parseInt((loaded / this.container.file.size).toFixed(2));
     },
   },
   methods: {
-    handleFileChange(e) {
-      console.log("e: ", e);
+    async handleFileChange(e) {
       const [file] = e.target.files;
       if (!file) {
         return;
       }
       Object.assign(this.$data, this.$options.data());
       this.container.file = file;
-      console.log("file: ", file);
+      const fileChunkList = this.createFileChunk(this.container.file);
+      this.container.hash = await this.caculateHash(fileChunkList);
+      console.log("this.container.hash: ", this.container.hash);
+      this.data = fileChunkList.map(({ file }, index) => ({
+        chunk: file,
+        fileHash: this.container.hash,
+        index,
+        hash: this.container.file.name + "-" + index, // 文件名+数组小编
+        percentage: 0,
+      }));
     },
     request({
       url,
@@ -115,17 +124,23 @@ export default {
       await Promise.all(requestList);
       // 合并切片
     },
+    // 生成文件hash webworker
+    caculateHash(fileChunkList) {
+      return new Promise((resolve) => {
+        // 添加worker
+        this.container.worker = new Worker("/hash.js");
+        this.container.worker.postMessage({ fileChunkList });
+        this.container.worker.onmessage = (e) => {
+          const { percentage, hash } = e.data;
+          this.hashPercentage = percentage;
+          if (hash) {
+            resolve(hash);
+          }
+        };
+      });
+    },
     async handleUpload() {
       if (!this.container.file) return;
-      const fileChunkList = this.createFileChunk(this.container.file);
-      console.log("fileChunkList: ", fileChunkList);
-      console.log("fileChunkList: ", fileChunkList);
-      this.data = fileChunkList.map(({ file }, index) => ({
-        chunk: file,
-        index,
-        hash: this.container.file.name + "-" + index, // 文件名+数组小编
-        percentage: 0,
-      }));
       await this.uploadChunks();
     },
     createProgressHandler(item) {
