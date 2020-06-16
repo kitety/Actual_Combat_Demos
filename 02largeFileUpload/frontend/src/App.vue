@@ -10,16 +10,16 @@
       <el-progress :percentage="uploadPercentage"></el-progress>
     </div>
     <el-table :data="data">
-      <el-table-column
-        prop="chunkHash"
-        label="切片hash"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        lable="大小"
-        align="center"
-        prop="size"
-      ></el-table-column>
+      <el-table-column prop="chunkHash" label="切片hash" align="center">
+        <template v-slot="{ row }">
+          {{ row.hash }}
+        </template>
+      </el-table-column>
+      <el-table-column lable="大小" align="center">
+        <template v-slot="{ row }">
+          {{ row.chunk.size }}
+        </template></el-table-column
+      >
       <el-table-column label="进度" align="center">
         <template v-slot="{ row }">
           <el-progress :percentage="row.percentage"></el-progress>
@@ -59,6 +59,7 @@ export default {
       }
       Object.assign(this.$data, this.$options.data());
       this.container.file = file;
+      if (!this.container.file) return;
       const fileChunkList = this.createFileChunk(this.container.file);
       this.container.hash = await this.caculateHash(fileChunkList);
       console.log("this.container.hash: ", this.container.hash);
@@ -66,9 +67,11 @@ export default {
         chunk: file,
         fileHash: this.container.hash,
         index,
-        hash: this.container.file.name + "-" + index, // 文件名+数组小编
+        name: this.container.file.name, // 文件名+数组小编
+        hash: this.container.hash + "-" + index, // 文件名+数组小编
         percentage: 0,
       }));
+      console.log("this.data: ", this.data);
     },
     request({
       url,
@@ -139,8 +142,30 @@ export default {
         };
       });
     },
+    async verifyUpload(filename, hash) {
+      const data = await this.request({
+        url: "http://localhost:3000/verify",
+        headers: {
+          "content-type": "application/json",
+        },
+        data: JSON.stringify({
+          filename,
+          hash,
+        }),
+      });
+      console.log("data: ", data);
+      return JSON.parse({ data });
+    },
     async handleUpload() {
-      if (!this.container.file) return;
+      console.log(1);
+      const { shouldUpload } = await this.verifyUpload(
+        this.container.file.name,
+        this.container.hash
+      );
+      console.log("shouldUpload: ", shouldUpload);
+      if (!shouldUpload) {
+        return this.$message.success("上传成功");
+      }
       await this.uploadChunks();
     },
     createProgressHandler(item) {
@@ -158,6 +183,7 @@ export default {
         data: JSON.stringify({
           size: SIZE,
           filename: this.container.file.name,
+          hash: this.container.hash,
         }),
       });
     },

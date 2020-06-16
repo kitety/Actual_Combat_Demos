@@ -5,7 +5,8 @@ const fse = require("fs-extra");
 const server = http.createServer();
 
 const UPLOAD_DIR = path.resolve(__dirname, "..", "target"); //大文件存储目录
-
+const extractExt = (filename) =>
+  filename.slice(filename.lastIndexOf("."), filename.length); // 提取后缀名
 const resolvePost = (req) =>
   new Promise((resolve) => {
     let chunk = "";
@@ -58,13 +59,23 @@ server.on("request", async (req, res) => {
   }
   if (req.url === "/merge") {
     const data = await resolvePost(req);
-    const { filename, size } = data;
-    const filePath = path.resolve(UPLOAD_DIR, `${filename}`);
+    const { filename, size, hash } = data;
+    const filePath = path.resolve(UPLOAD_DIR, `${hash}${extractExt(filename)}`);
     await mergeFileChunk(filePath, filename, size);
     res.end(
       JSON.stringify({
         code: 0,
         message: "file merged success",
+      })
+    );
+  } else if (req.url === "/verify") {
+    const data = await resolvePost(req);
+    const { filename, hash } = data;
+    const ext = extractExt(filename);
+    const filePath = path.resolve(UPLOAD_DIR, `${hash}${ext}`);
+    res.end(
+      JSON.stringify({
+        shouldUpload: !fse.existsSync(filePath),
       })
     );
   } else {
