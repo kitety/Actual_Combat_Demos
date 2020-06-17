@@ -2,12 +2,13 @@
   <div id="app">
     <input type="file" @change="handleFileChange" />
     <el-button @click="handleUpload">上传</el-button>
-    <el-button @click="merge">合并</el-button>
+    <el-button @click="handlePause">停止</el-button>
+    <el-button @click="handleResume">恢复</el-button>
     <div>
       <div>hash进度</div>
       <el-progress :percentage="hashPercentage"></el-progress>
       <div>总进度</div>
-      <el-progress :percentage="uploadPercentage"></el-progress>
+      <el-progress :percentage="fakeUploadPercentage"></el-progress>
     </div>
     <el-table :data="data">
       <el-table-column prop="chunkHash" label="切片hash" align="center">
@@ -40,7 +41,10 @@ export default {
       hashPercentage: 0,
     },
     data: [],
+    requestList: [],
     hashPercentage: 0,
+    fakeUploadPercentage: 0,
+    paused: false,
   }),
   computed: {
     uploadPercentage() {
@@ -49,6 +53,13 @@ export default {
         .map((item) => item.chunk.size * item.percentage)
         .reduce((acc, cur) => Number(acc) + Number(cur), 0);
       return parseInt((loaded / this.container.file.size).toFixed(2));
+    },
+  },
+  watch: {
+    uploadPercentage(now) {
+      if (now > this.fakeUploadPercentage) {
+        this.fakeUploadPercentage = now;
+      }
     },
   },
   methods: {
@@ -62,7 +73,6 @@ export default {
       if (!this.container.file) return;
       const fileChunkList = this.createFileChunk(this.container.file);
       this.container.hash = await this.caculateHash(fileChunkList);
-      console.log("this.container.hash: ", this.container.hash);
       this.data = fileChunkList.map(({ file }, index) => ({
         chunk: file,
         fileHash: this.container.hash,
@@ -71,7 +81,6 @@ export default {
         hash: this.container.hash + "-" + index, // 文件名+数组小编
         percentage: 0,
       }));
-      console.log("this.data: ", this.data);
     },
     request({
       url,
@@ -79,6 +88,7 @@ export default {
       data,
       headers = {},
       onProgress = (e) => e,
+      requestList,
     }) {
       return new Promise((resolve) => {
         const xhr = new XMLHttpRequest();
@@ -89,9 +99,20 @@ export default {
         });
         xhr.send(data);
         xhr.onload = (e) => {
+          if (requestList) {
+            const index = requestList.findIndex((item) => item === xhr);
+            requestList.splice(index, 1);
+          }
           resolve({ data: e.target.response });
         };
+        // 暴露给外面
+        requestList?.push(xhr);
       });
+    },
+    handlePause() {
+      this.paused = true;
+      this.requestList.forEach((xhr) => xhr?.abort());
+      this.requestList = [];
     },
     // 生成文件切片
     createFileChunk(file, size = SIZE) {
@@ -107,8 +128,9 @@ export default {
       await this.mergeRequest();
     },
     // 上传切片
-    async uploadChunks() {
-      const requestList = this.data
+    async uploadChunks(uploadedList = []) {
+      const requestList = await this.data
+        .filter(({ hash }) => !uploadedList.includes(hash))
         .map(({ chunk, hash, index }) => {
           const formData = new FormData();
           formData.append("chunk", chunk);
@@ -116,16 +138,23 @@ export default {
           formData.append("filename", this.container.file.name);
           return { formData, index };
         })
-        .map(async ({ formData, index }) => {
+        .map(async ({ formData, index }) =>
           this.request({
             url: "http://localhost:3000",
             data: formData,
             onProgress: this.createProgressHandler(this.data[index]),
-          });
-        });
+            requestList: this.requestList,
+          })
+        );
       // 并发切片
       await Promise.all(requestList);
       // 合并切片
+      if (
+        !this.paused &&
+        uploadedList.length + requestList.length === this.data.length
+      ) {
+        await this.mergeRequest();
+      }
     },
     // 生成文件hash webworker
     caculateHash(fileChunkList) {
@@ -153,20 +182,22 @@ export default {
           hash,
         }),
       });
-      console.log("data: ", data);
       return JSON.parse(data);
     },
     async handleUpload() {
-      console.log(1);
-      const { shouldUpload } = await this.verifyUpload(
+      const { shouldUpload, uploadedList } = await this.verifyUpload(
         this.container.file.name,
         this.container.hash
       );
-      console.log("shouldUpload: ", shouldUpload);
+      console.log("this.data : ", this.data);
+      this.data = this.data.map((item) => ({
+        ...item,
+        percentage: uploadedList.includes(item.hash) ? 100 : 0,
+      }));
       if (!shouldUpload) {
         return this.$message.success("上传成功");
       }
-      await this.uploadChunks();
+      await this.uploadChunks(uploadedList);
     },
     createProgressHandler(item) {
       return (e) => {
@@ -186,6 +217,14 @@ export default {
           hash: this.container.hash,
         }),
       });
+    },
+    async handleResume() {
+      this.paused = false;
+      const { uploadList } = await this.verifyUpload(
+        this.container.file.name,
+        this.container.hash
+      );
+      await this.uploadChunks(uploadList);
     },
   },
 };

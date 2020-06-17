@@ -49,6 +49,8 @@ const mergeFileChunk = async (filePath, filename, size) => {
   );
   fse.rmdirSync(chunkDir);
 };
+const createUploadList = async (filePath) =>
+  fse.existsSync(filePath) ? await fse.readdirSync(filePath) : [];
 server.on("request", async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Headers", "*");
@@ -76,6 +78,9 @@ server.on("request", async (req, res) => {
     res.end(
       JSON.stringify({
         shouldUpload: !fse.existsSync(filePath),
+        uploadedList: await createUploadList(
+          path.resolve(UPLOAD_DIR, filename + "dir")
+        ),
       })
     );
   } else {
