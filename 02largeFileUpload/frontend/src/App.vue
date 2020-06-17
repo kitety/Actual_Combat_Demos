@@ -89,7 +89,7 @@ export default {
         });
         xhr.send(data);
         xhr.onload = (e) => {
-          resolve({ data: e.target.reponse });
+          resolve({ data: e.target.response });
         };
       });
     },
@@ -143,7 +143,7 @@ export default {
       });
     },
     async verifyUpload(filename, hash) {
-      const data = await this.request({
+      const { data } = await this.request({
         url: "http://localhost:3000/verify",
         headers: {
           "content-type": "application/json",
@@ -154,7 +154,7 @@ export default {
         }),
       });
       console.log("data: ", data);
-      return JSON.parse({ data });
+      return JSON.parse(data);
     },
     async handleUpload() {
       console.log(1);
