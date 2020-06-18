@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "commit": "git-cz"
+    "dev": "npx docz dev",
+    "start": "npm run dev",
+    "build:doc": "rimraf doc-site && docz build",
+    "preview:doc": "docz serve"
   },
   "lint-staged": {
     "components/**/*.ts?(x)": [
@@ -40,14 +42,17 @@
     "@umijs/fabric": "^2.1.0",
     "commitizen": "^4.1.2",
     "cz-conventional-changelog": "^3.2.0",
+    "docz": "^2.3.1",
+    "gatsby-plugin-less": "^3.2.4",
     "husky": "^4.2.5",
+    "less": "^3.11.3",
     "lint-staged": "^10.2.10",
     "prettier": "^2.0.5",
     "typescript": "^3.9.5"
   },
   "dependencies": {
+    "prop-types": "^15.7.2",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "prop-types": "^15.7.2"
+    "react-dom": "^16.13.1"
   }
 }
