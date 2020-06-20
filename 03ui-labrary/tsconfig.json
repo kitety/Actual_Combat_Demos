@@ -1,6 +1,17 @@
 {
   "compilerOptions": {
     "baseUrl": "./",
+    "paths": {
+      "happy-ui": [
+        "components/index.ts"
+      ],
+      "happy-ui/esm/*": [
+        "components/*"
+      ],
+      "happy-ui/lib/*": [
+        "components/*"
+      ]
+    },
     "target": "esnext",
     "module": "commonjs",
     "jsx": "react",
@@ -12,6 +23,11 @@
     "esModuleInterop": true,
     "resolveJsonModule": true
   },
-  "include": ["components", "global.d.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "components",
+    "global.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

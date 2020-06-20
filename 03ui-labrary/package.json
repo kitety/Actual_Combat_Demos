@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "npx docz dev",
+    "dev": "rimraf .docz/.cache&& npx docz dev",
     "start": "npm run dev",
     "build:doc": "rimraf doc-site && docz build",
     "preview:doc": "docz serve"
@@ -48,6 +48,14 @@
     "less": "^3.11.3",
     "lint-staged": "^10.2.10",
     "prettier": "^2.0.5",
+    "prismjs": "^1.20.0",
+    "raw-loader": "^4.0.1",
+    "react-copy-to-clipboard": "^5.0.2",
+    "react-feather": "^2.0.8",
+    "react-simple-code-editor": "^0.11.0",
+    "react-tooltip": "^4.2.7",
+    "react-use": "^15.2.5",
+    "styled-components": "^5.1.1",
     "typescript": "^3.9.5"
   },
   "dependencies": {
