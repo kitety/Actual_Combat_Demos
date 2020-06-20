@@ -2,12 +2,17 @@
   "name": "03ui-labrary",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "module": "esm/index.js",
+  "typings": "lib/index.d.ts",
+  "main": "lib/index.js",
   "scripts": {
     "dev": "rimraf .docz/.cache&& npx docz dev",
     "start": "npm run dev",
     "build:doc": "rimraf doc-site && docz build",
-    "preview:doc": "docz serve"
+    "preview:doc": "docz serve",
+    "build:types": "tsc -p tsconfig.build.json && npx cpr lib esm",
+    "clean": "rimraf lib esm dist",
+    "build": "npm run clean && npm run build:types && gulp"
   },
   "lint-staged": {
     "components/**/*.ts?(x)": [
@@ -35,15 +40,24 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.10.3",
+    "@babel/plugin-proposal-class-properties": "^7.10.1",
+    "@babel/plugin-transform-runtime": "^7.10.3",
+    "@babel/preset-env": "^7.10.3",
+    "@babel/preset-react": "^7.10.1",
+    "@babel/preset-typescript": "^7.10.1",
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
     "@types/react": "^16.9.37",
     "@types/react-dom": "^16.9.8",
     "@umijs/fabric": "^2.1.0",
     "commitizen": "^4.1.2",
+    "cpr": "^3.0.1",
     "cz-conventional-changelog": "^3.2.0",
     "docz": "^2.3.1",
     "gatsby-plugin-less": "^3.2.4",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
     "husky": "^4.2.5",
     "less": "^3.11.3",
     "lint-staged": "^10.2.10",
@@ -56,9 +70,12 @@
     "react-tooltip": "^4.2.7",
     "react-use": "^15.2.5",
     "styled-components": "^5.1.1",
-    "typescript": "^3.9.5"
+    "typescript": "^3.9.5",
+    "vfile-message": "^2.0.4"
   },
   "dependencies": {
+    "@babel/runtime": "^7.10.3",
+    "@types/vfile-message": "^2.0.0",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
