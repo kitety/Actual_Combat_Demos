@@ -1,9 +1,15 @@
 <template>
   <el-scrollbar class="file-list" wrap-class="scrollbar-filelist" :noresize="false" tag="ul">
-    <li v-for="(item, index) in fileList" :key="index" class="file-item">
+    <li
+      v-for="(item, index) in fileList"
+      :key="index"
+      class="file-item"
+      :class="{active:index === activeIndex}"
+      @click="handleChange(index)"
+    >
       <font-awesome-icon :icon="['fab', 'markdown']" class="item-icon" />
       <p class="item-title">{{ item.title }}</p>
-      <p class="item-time">{{ item.time }}</p>
+      <p class="item-time">{{ item.createAt }}</p>
     </li>
   </el-scrollbar>
 </template>
@@ -15,10 +21,26 @@ export default {
     fileList: {
       type: Array,
       default: () => []
-    }
+    },
+    active: Number
   },
   data() {
-    return {}
+    return {
+      activeIndex: 0
+    }
+  },
+  watch: {
+    active(newValue) {
+      this.activeIndex = newValue
+    },
+    activeIndex(newValue) {
+      this.$emit('update:active', newValue)
+    }
+  },
+  methods: {
+    handleChange(index) {
+      this.activeIndex = index
+    }
   }
 }
 </script>
@@ -49,6 +71,9 @@ export default {
       width: 80px;
       font-size: 12px;
     }
+  }
+  .active {
+    background: #f5f5f5;
   }
 }
 </style>

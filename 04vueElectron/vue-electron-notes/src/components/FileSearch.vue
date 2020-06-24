@@ -1,13 +1,13 @@
 <template>
   <div class="search-container">
     <el-input placeholder="请输入内容" v-bind="$attrs" v-on="$listeners">
-      <el-button slot="append" icon="el-icon-search" />
+      <el-button slot="append" icon="el-icon-search" @click.native="onSearch" />
     </el-input>
     <el-dropdown>
       <el-button type="primary" icon="el-icon-circle-plus-outline" circle />
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item @click="createFile()">新建笔记</el-dropdown-item>
-        <el-dropdown-item divided @click="importFile()">导入文件</el-dropdown-item>
+        <el-dropdown-item @click.native="createFile()">新建笔记</el-dropdown-item>
+        <el-dropdown-item divided @click.native="importFile()">导入文件</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
@@ -19,7 +19,11 @@ export default {
   methods: {
     // 新建笔记
     createFile() {
+      console.log(1111)
       this.$emit('create')
+    },
+    onSearch() {
+      this.$emit('search')
     },
     // 导入文件
     importFile() {
