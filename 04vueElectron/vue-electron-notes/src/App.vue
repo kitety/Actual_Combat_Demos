@@ -2,6 +2,10 @@
   <div class="app-wrapper">
     <div class="sidebar-container">
       <file-search v-model="searchTitle" />
+      <el-button type="primaty" @click="createTest">增加</el-button>
+      <el-button type="primaty" @click="deleteTest">删除</el-button>
+      <el-button type="primaty" @click="updateTest">改动</el-button>
+      <el-button type="primaty" @click="queryTest">查找</el-button>
       <file-list :fileList="fileList" />
     </div>
     <div class="main-container">
@@ -46,6 +50,38 @@ export default {
         title: '手摸手Electron + Vue实战教程（三）',
         content: ''
       }
+    }
+  },
+  methods: {
+    createTest() {
+      const fileNew = { title: '无标题笔记', content: '' }
+      console.log('fileNew: ', fileNew)
+      this.$db.insert(fileNew)
+      this.$message.success('创建成功')
+    },
+    async deleteTest() {
+      const list = await this.$db.find().sort({ updateAt: -1 })
+      if (list.length > 0) {
+        this.$db.remove({ _id: list[0]._id }).then(() => {
+          this.$message.warning('删除成功')
+        })
+      }
+    },
+    async updateTest() {
+      const list = await this.$db.find().sort({ updateAt: -1 })
+      if (list.length > 0) {
+        this.$db.update({ _id: list[0]._id }, { $set: { title: '修改过的标题' } }).then(() => {
+          this.$message.success('修改成功')
+        })
+      }
+    },
+    async queryTest() {
+      const list = await this.$db.find().sort({ updateAt: -1 })
+      console.log('list: ', list)
+    },
+    onSubmit(value) {
+      console.log(value)
+      console.log(this.fileItem)
     }
   }
 }
