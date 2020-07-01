@@ -18,7 +18,7 @@
         :boxShadow="false"
         :subfield="false"
         :shortcut="false"
-        @change="onSubmit"
+        @change="updateContent"
         @titleBlur="updateTitle"
       />
     </div>
@@ -80,31 +80,39 @@ export default {
       this.getFileList(query)
     },
     fileCreate() {
-      console.log(1)
       const defaultFile = { title: '无标题笔记', content: '' }
       this.$db.markdown.insert(defaultFile)
       this.$message.success('创建成功')
       this.getFileList()
     },
-    onSubmit(value) {
-      console.log(value)
-      console.log(this.fileItem)
+    updateContent(content) {
+      console.log(content, this.activeIndex)
+      console.log(this)
+      const { _id, originContent } = this.fileItem
+      console.log('originContent: ', originContent)
+      if (content === originContent) return
+      this.$db.markdown.update({ _id, content: { $ne: content } }, { $set: { content } }).then(async () => {
+        if (this.activeIndex === 0) return
+        await this.getFileList({}, this.activeIndex)
+      })
     },
-    async getFileList(query = {}) {
+    async getFileList(query = {}, index) {
       const list = await this.$db.markdown.find(query).sort({ updatesAt: -1 })
       // for (const item of list) {
       //   item.createAt = dayjs(item.createAt).format('YYYY-MM-DD HH:mm:ss')
       //   item.updatedAt = dayjs(item.updatedAt).format('YYYY-MM-DD HH:mm:ss')
       // }
-      list.map(item => ({
+      console.log('list: ', list)
+      this.fileList = list.map(item => ({
         ...item,
+        originContent: item.content,
         createAt: dayjs(item.createAt).format('YYYY-MM-DD HH:mm:ss'),
         updatedAt: dayjs(item.updatedAt).format('YYYY-MM-DD HH:mm:ss')
       }))
-      console.log()
-      this.fileList = list
       this.fileItem = list[0] || init
-      this.activeIndex = 0
+
+      console.log('list: ', this.fileList)
+      this.activeIndex = index || 0
     }
   }
 }
