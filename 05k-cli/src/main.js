@@ -41,7 +41,8 @@ Reflect.ownKeys(mapAction).forEach((action) => {
       } else {
         console.log(action);
         // 运行zhu-cli create xxx  解析后是[node , zhu-cli  , create  , xxx]
-        require(path.resolve(__dirname, action)(...process.argv.slice(3)));
+        // eslint-disable-next-line global-require
+        require(path.resolve(__dirname, action))(...process.argv.slice(3));
       }
     });
 });
