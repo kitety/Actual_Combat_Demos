@@ -32,5 +32,6 @@ const puppeteer = require("puppeteer");
     //   height: 40
     // }
   });
+  await page.pdf({ path: "google.pdf" });
   browser.close();
 })();
