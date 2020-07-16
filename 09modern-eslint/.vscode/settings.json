@@ -1,0 +1,36 @@
+{
+  // VSCode 中的 ESLint 插件默认是不会检查 `.vue`、`.ts` 或 `.tsx` 后缀的
+  "eslint.validate": ["javascript", "javascriptreact", "vue", "typescript", "typescriptreact"],
+  // 开启保存时自动修复
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    // 开启保存自动修复所有stylelint可修复的选项
+    "source.fixAll.stylelint": true
+  },
+  // 指定VSCode用于IntelliSense（智能感知）的ts版本，将内置版本更换为工作区版本
+  "typescript.tsdk": "node_modules/typescript/lib",
+  // 保存时自动格式化所有支持文件 javascript/javascriptreact/typescript/typescriptreact/json/graphql
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  // 去除其他插件
+  "css.validate": false,
+  "less.validate": false,
+  "scss.validate": false,
+  // 编辑器格式化全部交给 Prettiern 配置
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // 针对某种语言，配置替代编辑器设置，取消自动保存格式化
+  "[css]": {
+    "editor.formatOnSave": false
+  },
+  "[less]": {
+    "editor.formatOnSave": false
+  },
+  "[scss]": {
+    "editor.formatOnSave": false
+  }
+}
