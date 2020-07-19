@@ -3,7 +3,7 @@ const { parse } = require('es-module-lexer') //解析import语法
 const MagicString = require('magic-string')//字符串不变性
 function rewriteImports (source) {
   let imports = parse(source)[0]
-  console.log(imports);
+  // console.log(imports);
   let magicString = new MagicString(source)// overwrite
   if (imports.length) {
     for (let i = 0; i < imports.length; i++) {
@@ -17,14 +17,13 @@ function rewriteImports (source) {
       }
     }
   }
-  return magicString.toString()
+  return magicString.toString() //增加`@modules`，浏览器会再次拦截，因此服务器要拦截带有`/@modules`的请求
 }
 function moduleRewritePlugin ({ app, root }) {
   app.use(async (ctx, next) => {
-    console.log(11112121);
     await next()// ctx.body=await fs.readfile
     // 完善逻辑 洋葱
-    console.log(ctx.response.type);
+    // console.log(ctx.response.type);
     // 读取流的代码
     if (ctx.body && ctx.response.is('js')) {
       // console.log(ctx.response.type);
