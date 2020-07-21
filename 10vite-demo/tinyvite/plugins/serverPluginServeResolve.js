@@ -53,3 +53,4 @@ function moduleResolvePlugin ({ app, root }) {
   })
 }
 exports.moduleResolvePlugin = moduleResolvePlugin
+exports.resolveVue = resolveVue
