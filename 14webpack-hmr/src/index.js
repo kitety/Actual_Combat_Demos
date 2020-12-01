@@ -1,3 +1,4 @@
+require('./client.js')
 let root = document.getElementById("root");
 function render() {
   let title = require("./title").default;
