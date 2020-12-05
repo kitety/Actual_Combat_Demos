@@ -24,7 +24,7 @@ export const connect = (mapStateToProps = () => { }, mapDispatchToProps = {}, me
             const dispatch = s.dispatch
             const stateProps = mapStateToProps(store, this.props)
             let disPatchProps
-            if (typeof disPatchProps === 'function') {
+            if (typeof mapDispatchToProps === 'function') {
               disPatchProps = mapDispatchToProps(dispatch, this.props)
             } else {
               disPatchProps = mapDispatchToProps

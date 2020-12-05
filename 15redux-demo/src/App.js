@@ -1,5 +1,5 @@
 import React from 'react'
-import { applyMiddleware, createStore } from './redux'
+import { applyMiddleware, createStore, combineReducer } from './redux'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 import { Provider } from './react-redux'
@@ -37,7 +37,7 @@ function reducer (state = 0, action) {
       break;
   }
 }
-const store = createStore(reducer, 1, applyMiddleware(mythunk, mylogger))
+const store = createStore(combineReducer({ 'count': reducer }), applyMiddleware(mythunk, mylogger))
 const App = () => {
   const [state, update] = React.useState(0)
   const forceUpdate = () => {
@@ -60,9 +60,10 @@ const App = () => {
   function desc () {
     store.dispatch({ type: 'DESC' })
   }
+  console.log('store.getState(): ', store.getState());
   return (
     <Provider store={store}>
-      <p>{store.getState()}</p>
+      <p>{(store.getState()).count}</p>
       <button onClick={asyncAdd}>异步+</button>
       <button onClick={add}>+</button>
       <button onClick={desc}>-</button>

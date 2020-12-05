@@ -62,3 +62,32 @@ export function applyMiddleware (...middleware) {
     return { ...store, dispatch }
   }
 }
+
+export function combineReducer (reducers) {
+  // 第一个只是先过滤一遍 把非function的reducer过滤掉
+  const reducerKeys = Object.keys(reducers)
+  const finalReducers = {}
+  reducerKeys.forEach((key) => {
+    if (typeof reducers[key] === 'function') {
+      finalReducers[key] = reducers[key]
+    }
+  })
+  const finalReducersKeys = Object.keys(finalReducers)
+  // 第二步比较重要 就是将所有reducer合在一起
+  // 根据key调用每个reducer，将他们的值合并在一起
+  let hasChange = false;
+  const nextState = {};
+  return function combine (state = {}, action) {
+    finalReducersKeys.forEach((key) => {
+      // 第一步先获取目前的state[key]，所以说传入reducer的key === store的key
+      const previousValue = state[key];
+      // 就用reducer[key]来处理，得到下一个状态
+      const nextValue = reducers[key](previousValue, action);
+      // 根据key更新store的值
+      nextState[key] = nextValue;
+      hasChange = hasChange || previousValue !== nextValue
+    })
+    // 如果整个循环都没有被更新过，返回state
+    return hasChange ? nextState : state;
+  }
+}

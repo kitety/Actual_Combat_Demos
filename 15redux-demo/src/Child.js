@@ -8,9 +8,12 @@ class Child extends Component {
     return (
       <div>
         <hr />
-        <p>{this.props.state}</p>
+        <p>{this.props.state.count}</p>
         <button >异步+</button>
         <button onClick={this.props.add}>+</button>
+        <button onClick={() => {
+          this.props.dispatch({ type: 'ADD' })
+        }}>+2</button>
         <button onClick={this.props.desc}>-</button>
       </div>
     )
@@ -25,7 +28,9 @@ function mapStateToProps (state, ownProps) {
 const mapDispatchToProps = dispatch => {
   return {
     // dispatching plain actions
-    add: () => dispatch({ type: 'ADD' }),
+    add: () => {
+      return dispatch({ type: 'ADD' })
+    },
     desc: () => dispatch({ type: 'DESC' }),
     reset: () => dispatch({ type: 'sarsfe' })
   }
