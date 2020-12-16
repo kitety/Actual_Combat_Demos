@@ -5,19 +5,19 @@
   "version": "0.2.0",
   "configurations": [
 
-    // {
-    //   "name": "Attach to Remote",
-    //   "port": 9230,
-    //   "request": "attach",
-    //   "type": "node"
-    // }
     {
-      "name": "Launch via NPM",
-      "request": "launch",// launch 新进程 attach 附加进程
-      "runtimeArgs": ["run-script", "dev"],
-      "runtimeExecutable": "npm",
-      "skipFiles": ["<node_internals>/**"],
-      "type": "pwa-node"
+      "name": "Attach to Remote",
+      "port": 9230,
+      "request": "attach",
+      "type": "node"
     }
+    // {
+    //   "name": "Launch via NPM",
+    //   "request": "launch",// launch 新进程 attach 附加进程
+    //   "runtimeArgs": ["run-script", "dev"],
+    //   "runtimeExecutable": "npm",
+    //   "skipFiles": ["<node_internals>/**"],
+    //   "type": "pwa-node"
+    // }
   ]
 }
