@@ -4,6 +4,7 @@ let pluginDev = require("./plugins/commands/dev");
 let pluginHistory = require("./plugins/generateFiles/history");
 let pluginUmi = require("./plugins/generateFiles/umi");
 let pluginRoutes = require("./plugins/generateFiles/routes");
+let pluginPlugin = require("./plugins/generateFiles/plugin");
 (async function () {
   let service = new Service({
     plugins: [
@@ -11,6 +12,7 @@ let pluginRoutes = require("./plugins/generateFiles/routes");
       { id: "history", apply: pluginHistory },
       { id: "umi", apply: pluginUmi },
       { id: "routes", apply: pluginRoutes },
+      { id: "plugin", apply: pluginPlugin },
     ],
   });
   // 运行dev这个命令

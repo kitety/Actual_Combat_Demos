@@ -1,3 +1,4 @@
+import plugin from "./plugin";
 export function getRoutes() {
   const routes = [
   {
@@ -27,5 +28,6 @@ export function getRoutes() {
     "component":require('@/pages/user/_layout.js').default
   }
 ]
+  plugin.applyPlugins({ key: "patchRoutes", args: { routes } });
   return routes;
 }
