@@ -4,7 +4,7 @@ const cwd = process.cwd();
 
 module.exports = {
   mode: "development",
-  entry: "./src/.umi2/umi.js",
+  entry: "./src/.umi3/umi.js",
   output: {
     path: path.join(__dirname, "dist"),
     filename: "[name].js",
@@ -36,7 +36,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./src/.umi2/index.html",
+      template: "./src/public/index.html",
     }),
   ],
 };

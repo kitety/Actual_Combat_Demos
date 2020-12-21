@@ -1,4 +1,4 @@
 export function getRoutes() {
-  const routes = {{routes}}
+  const routes = {{{routes}}}
   return routes;
 }

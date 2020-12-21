@@ -33,16 +33,40 @@ function fileToRouteReducer(opts, routes, file) {
   const stats = statSync(absPathFile);
   if (stats.isDirectory()) {
     // 目录
+    const relFile = join(relDir, file); // ''+user--user
+    let layoutFile = join(root, relFile, "_layout.js");
+    let route = {
+      path: normalizePath(relFile),
+      // 递归
+      routes: getRoutes({
+        ...opts,
+        relDir: relFile, //相对目录
+      }),
+    };
+    // 判断模板文件
+    if (existsSync(layoutFile)) {
+      // @/pages/user/_layout.js
+      route.component = toComponentPath(root, layoutFile);
+    }
+    routes.push(route);
   } else {
     // 文件
     let fileName = basename(file, extname(file));
     routes.push({
-      path: winPath(join(relDir, fileName)), //TODO
+      path: normalizePath(join(relDir, fileName)), //TODO
       exact: true,
       component: toComponentPath(root, absPathFile),
     });
   }
   return routes;
+}
+function normalizePath(path) {
+  // 用winPath处理
+  path = winPath(path);
+  path = `/${path}`;
+  // 把\index结束的变为/
+  path = path.replace(/\/index$/, "/");
+  return path;
 }
 function toComponentPath(root, absPathFile) {
   // resolve(root, "..") root的父目录-> src的绝对路径
@@ -65,6 +89,4 @@ function getFiles(root) {
   });
 }
 let routes = getRoutes({ root: absPagesPath });
-console.log("routes: ", routes);
-
 module.exports = routes;
