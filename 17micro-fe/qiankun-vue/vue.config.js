@@ -4,8 +4,11 @@ module.exports = {
       library: "singleVue",
       libraryTarget: "umd",
     },
-  },
-  devServer: {
-    port: 9999,
+    devServer: {
+      port: 10000,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+    },
   },
 };
