@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      class SnapshotSandBox {
+        constructor() {
+          this.proxy = window;
+          this.modifyPropsSnap = {};
+          this.active();
+        }
+        active() {
+          this.windowSnapshot = {};
+          for (const props in window) {
+            if (Object.hasOwnProperty.call(window, props)) {
+              this.windowSnapshot[props] = window[props];
+            }
+          }
+          Object.keys(this.modifyPropsSnap).forEach((p) => {
+            window[p] = this.modifyPropsSnap[p];
+          });
+        }
+        inactive() {
+          for (const props in window) {
+            if (Object.hasOwnProperty.call(window, props)) {
+              // 有改动
+              if (this.windowSnapshot[props] !== window[props]) {
+                this.modifyPropsSnap[props] = window[props];
+                window[props] = this.windowSnapshot[props];
+              }
+            }
+          }
+        }
+      }
+
+      let sandbox = new SnapshotSandBox();
+      // 沙箱 从开始到结束 切换后不会影响到全局
+      ((window) => {
+        window.a = 1;
+        window.b = 2;
+        console.log(window.a, window.b);
+        sandbox.inactive();
+        console.log(window.a, window.b);
+        sandbox.active();
+        console.log(window.a, window.b);
+      })(sandbox.proxy);
+    </script>
+  </body>
+</html>
