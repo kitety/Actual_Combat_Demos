@@ -1,0 +1,17 @@
+{
+  "name": "18my-single-spa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "rollup -c -w"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "rollup": "^2.48.0",
+    "rollup-plugin-serve": "^1.1.0"
+  }
+}
