@@ -7,7 +7,7 @@ import "element-plus/dist/index.css";
 // 初始化css 重置css默认样式
 import "normalize.css/normalize.css";
 // 全局 css
-// import "./styles/index.scss";
+import "@/styles/index.scss";
 
 const app = createApp(App);
 app.use(ElementPlus);
