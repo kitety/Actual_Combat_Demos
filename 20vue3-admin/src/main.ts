@@ -8,9 +8,12 @@ import "element-plus/dist/index.css";
 import "normalize.css/normalize.css";
 // 全局 css
 import "@/styles/index.scss";
+import 'virtual:svg-icons-register'
+// import initScgIcon from "@/icons/index";
 
 const app = createApp(App);
 app.use(ElementPlus);
 app.use(store);
 app.use(router);
+// app.use(initScgIcon);
 app.mount("#app");

@@ -1,0 +1,12 @@
+# replace default config
+
+# multipass: true
+# full: true
+
+plugins:
+
+
+- removeAttrs:
+    attrs:
+      - 'fill'
+      - 'fill-rule'
