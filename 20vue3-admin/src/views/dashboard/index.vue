@@ -9,12 +9,19 @@
   </div>
 </template>
 <script lang="ts">
+import { getCurrentInstance } from "vue";
+
 export default {
   name: "DashBoard",
-  methods: {
-    handleClick() {
+  setup() {
+    const { proxy } = getCurrentInstance()!;
+    const handleClick = () => {
+      proxy?.$message.success("Clicked");
       console.log("click");
-    },
+    };
+    return {
+      handleClick,
+    };
   },
 };
 </script>
